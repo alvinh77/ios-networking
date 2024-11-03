@@ -1,4 +1,4 @@
-public enum NetworkError: Error {
+public enum NetworkError: Error, Equatable {
     case encoding
     case decoding
     case invalidURL

@@ -8,7 +8,7 @@ public struct NetworkManager: Sendable {
     public init(
         requestMapper: @escaping RequestMapping,
         dataProvider: @escaping DataProviding,
-        responseHandler: ResponseHandling?
+        responseHandler: ResponseHandling? = nil
     ) {
         self.requestMapper = requestMapper
         self.dataProvider = dataProvider
