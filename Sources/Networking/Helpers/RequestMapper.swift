@@ -13,8 +13,8 @@ public struct RequestMapper: Sendable {
 }
 
 extension RequestMapper {
-    public static var `default`: RequestMapper {
-        RequestMapper { @Sendable (request) throws(NetworkError) in
+    public init() {
+        self.mapping = { @Sendable (request) throws(NetworkError) in
             guard var urlComponents = URLComponents(
                 string: "\(request.baseURL)\(request.path)"
             ) else {

@@ -53,3 +53,19 @@ extension NetworkManager {
         }
     }
 }
+
+extension NetworkManager {
+    public init(
+        urlSession: URLSession = .shared,
+        requestMapper: RequestMapper = .init(),
+        responseHandler: ResponseHandling? = nil
+    ) {
+        self.dataProvider = { request in
+            try await urlSession.data(for: request)
+        }
+        self.requestMapper = { request throws(NetworkError) in
+            try requestMapper.map(request)
+        }
+        self.responseHandler = responseHandler
+    }
+}
