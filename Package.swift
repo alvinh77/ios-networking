@@ -10,16 +10,26 @@ let package = Package(
         .library(
             name: "Networking",
             targets: ["Networking"]
+        ),
+        .library(
+            name: "NetworkingInterfaces",
+            targets: ["NetworkingInterfaces"]
         )
     ],
     targets: [
         .target(
             name: "Networking",
-            dependencies: []
+            dependencies: [
+                .target(name: "NetworkingInterfaces")
+            ]
         ),
+        .target(name: "NetworkingInterfaces"),
         .testTarget(
             name: "NetworkingTests",
-            dependencies: ["Networking"]
+            dependencies: [
+                .target(name: "Networking"),
+                .target(name: "NetworkingInterfaces")
+            ]
         )
     ]
 )

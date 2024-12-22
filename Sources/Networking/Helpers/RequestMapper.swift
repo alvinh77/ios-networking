@@ -1,4 +1,5 @@
 import Foundation
+import NetworkingInterfaces
 
 public struct RequestMapper: Sendable {
     public init() {}

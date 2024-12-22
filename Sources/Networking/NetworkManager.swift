@@ -1,6 +1,8 @@
 import Foundation
+import NetworkingInterfaces
 
 public struct NetworkManager: Sendable {
+    typealias DataProviding = @Sendable (URLRequest) async throws -> (Data, URLResponse)
     private let requestMapper: RequestMapping
     private let dataProvider: DataProviding
     private let responseHandler: ResponseHandling?

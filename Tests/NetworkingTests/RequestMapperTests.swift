@@ -1,7 +1,6 @@
+@testable import Networking
 import Foundation
 import Testing
-
-@testable import Networking
 
 struct RequestMapperTests {
     @Test

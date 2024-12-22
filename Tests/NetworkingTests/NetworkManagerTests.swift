@@ -1,7 +1,7 @@
-import Foundation
-import Testing
-
 @testable import Networking
+import Foundation
+import NetworkingInterfaces
+import Testing
 
 struct NetworkingTests {
     @Test
