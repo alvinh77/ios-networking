@@ -9,7 +9,21 @@ struct NetworkingTests {
         let request = MockRequest<MockResponse>(
             parameters: ["query": "keyword"]
         )
+        let expectedData = try JSONEncoder().encode(MockResponse(identifier: "123"))
+        let url = try #require(URL(string: "https://www.test.com.au"))
+        let expectedResponse = try #require(
+            HTTPURLResponse(
+                url: url,
+                statusCode: 200,
+                httpVersion: nil,
+                headerFields: nil
+            )
+        )
         let networkManager = NetworkManager(
+            dataProvider: { request in
+                #expect(request.url == url)
+                return (expectedData, expectedResponse)
+            },
             requestMapper: { request throws(NetworkError) in
                 guard let request = request as? MockRequest<MockResponse>,
                       let url = URL(string: "https://www.test.com.au")
@@ -19,17 +33,9 @@ struct NetworkingTests {
                 #expect(request.parameters == ["query": "keyword"])
                 return .init(url: url)
             },
-            dataProvider: { request in
-                #expect(request.url?.absoluteString == "https://www.test.com.au")
-                let data = try JSONEncoder().encode(MockResponse(identifier: "123"))
-                let response = try HTTPURLResponse(
-                    url: #require(.init(string: "https://www.test.com")),
-                    statusCode: 200,
-                    httpVersion: nil,
-                    headerFields: nil
-                )
-                let httpResponse = try #require(response)
-                return (data, httpResponse)
+            responseHandler: { (response, data) in
+                #expect(response == expectedResponse)
+                #expect(data == expectedData)
             }
         )
         let response = try await networkManager.response(for: request)
@@ -39,11 +45,11 @@ struct NetworkingTests {
     @Test
     func invalidURL() async throws {
         let networkManager = NetworkManager(
-            requestMapper: { _ throws(NetworkError) in
-                throw NetworkError.invalidURL
-            },
             dataProvider: { _ in
                 throw NetworkError.internalFailure
+            },
+            requestMapper: { _ throws(NetworkError) in
+                throw NetworkError.invalidURL
             }
         )
         await #expect(
@@ -57,14 +63,14 @@ struct NetworkingTests {
     @Test
     func dataProviderFailure() async throws {
         let networkManager = NetworkManager(
+            dataProvider: { _ in
+                throw NSError(domain: "domain", code: 500)
+            },
             requestMapper: { _ throws(NetworkError) in
                 guard let url = URL(string: "https://www.test.com.au") else {
                     throw NetworkError.internalFailure
                 }
                 return .init(url: url)
-            },
-            dataProvider: { _ in
-                throw NSError(domain: "domain", code: 500)
             }
         )
         await #expect(
@@ -78,15 +84,15 @@ struct NetworkingTests {
     @Test
     func invalidResponseFailure() async throws {
         let networkManager = NetworkManager(
+            dataProvider: { _ in
+                let data = try JSONEncoder().encode(MockResponse(identifier: "123"))
+                return (data, URLResponse())
+            },
             requestMapper: { _ throws(NetworkError) in
                 guard let url = URL(string: "https://www.test.com.au") else {
                     throw NetworkError.invalidURL
                 }
                 return .init(url: url)
-            },
-            dataProvider: { _ in
-                let data = try JSONEncoder().encode(MockResponse(identifier: "123"))
-                return (data, URLResponse())
             }
         )
         await #expect(
@@ -100,12 +106,6 @@ struct NetworkingTests {
     @Test
     func statusCodeFailure() async throws {
         let networkManager = NetworkManager(
-            requestMapper: { _ throws(NetworkError) in
-                guard let url = URL(string: "https://www.test.com.au") else {
-                    throw NetworkError.internalFailure
-                }
-                return .init(url: url)
-            },
             dataProvider: { request in
                 #expect(request.url?.absoluteString == "https://www.test.com.au")
                 let data = try JSONEncoder().encode(MockResponse(identifier: "123"))
@@ -117,6 +117,12 @@ struct NetworkingTests {
                 )
                 let httpResponse = try #require(response)
                 return (data, httpResponse)
+            },
+            requestMapper: { _ throws(NetworkError) in
+                guard let url = URL(string: "https://www.test.com.au") else {
+                    throw NetworkError.internalFailure
+                }
+                return .init(url: url)
             }
         )
         await #expect(
@@ -130,12 +136,6 @@ struct NetworkingTests {
     @Test
     func decodingFailure() async throws {
         let networkManager = NetworkManager(
-            requestMapper: { _ throws(NetworkError) in
-                guard let url = URL(string: "https://www.test.com.au") else {
-                    throw NetworkError.internalFailure
-                }
-                return .init(url: url)
-            },
             dataProvider: { _ in
                 let response = try HTTPURLResponse(
                     url: #require(.init(string: "https://www.test.com")),
@@ -145,6 +145,12 @@ struct NetworkingTests {
                 )
                 let httpResponse = try #require(response)
                 return (Data(), httpResponse)
+            },
+            requestMapper: { _ throws(NetworkError) in
+                guard let url = URL(string: "https://www.test.com.au") else {
+                    throw NetworkError.internalFailure
+                }
+                return .init(url: url)
             }
         )
         await #expect(

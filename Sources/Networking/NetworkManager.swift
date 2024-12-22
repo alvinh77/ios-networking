@@ -5,9 +5,9 @@ public struct NetworkManager: Sendable {
     private let dataProvider: DataProviding
     private let responseHandler: ResponseHandling?
 
-    public init(
-        requestMapper: @escaping RequestMapping,
+    init(
         dataProvider: @escaping DataProviding,
+        requestMapper: @escaping RequestMapping,
         responseHandler: ResponseHandling? = nil
     ) {
         self.requestMapper = requestMapper
@@ -15,7 +15,7 @@ public struct NetworkManager: Sendable {
         self.responseHandler = responseHandler
     }
 
-    func response<R: Request>(for request: R) async throws(NetworkError) -> R.Response {
+    public func response<R: Request>(for request: R) async throws(NetworkError) -> R.Response {
         let urlRequest = try requestMapper(request)
         let data = try await getData(from: urlRequest)
         return try decode(data)
@@ -60,12 +60,8 @@ extension NetworkManager {
         requestMapper: RequestMapper = .init(),
         responseHandler: ResponseHandling? = nil
     ) {
-        self.dataProvider = { request in
-            try await urlSession.data(for: request)
-        }
-        self.requestMapper = { request throws(NetworkError) in
-            try requestMapper.map(request)
-        }
+        self.dataProvider = urlSession.data(for:)
+        self.requestMapper = requestMapper.map(_:)
         self.responseHandler = responseHandler
     }
 }
