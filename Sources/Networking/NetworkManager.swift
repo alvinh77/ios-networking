@@ -59,11 +59,11 @@ extension NetworkManager {
 extension NetworkManager {
     public init(
         urlSession: URLSession = .shared,
-        requestMapper: RequestMapper = .init(),
+        requestMapper: @escaping RequestMapping = RequestMapper().map(_:),
         responseHandler: ResponseHandling? = nil
     ) {
         self.dataProvider = urlSession.data(for:)
-        self.requestMapper = requestMapper.map(_:)
+        self.requestMapper = requestMapper
         self.responseHandler = responseHandler
     }
 }
