@@ -1,7 +1,7 @@
 import Networking
 import NetworkingInterfaces
 
-public struct MockRequest<Response: Decodable & Sendable>: Request {
+public struct MockRequest: Request {
     public let baseURL: String
     public let path: String
     public let method: Method

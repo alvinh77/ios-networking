@@ -1,5 +1,4 @@
 public protocol Request: Sendable {
-    associatedtype Response: Decodable & Sendable
     var baseURL: String { get }
     var path: String { get }
     var parameters: [String: String]? { get }

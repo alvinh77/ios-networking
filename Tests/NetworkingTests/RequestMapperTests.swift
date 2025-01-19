@@ -5,7 +5,7 @@ import Testing
 struct RequestMapperTests {
     @Test
     func getMethodRequest() throws {
-        let request = MockRequest<MockResponse>(
+        let request = MockRequest(
             headers: [.contentType: "abc"],
             parameters: ["query": "keyword"]
         )
@@ -17,7 +17,7 @@ struct RequestMapperTests {
 
     @Test
     func postMethodRequest() throws {
-        let request = MockRequest<MockResponse>(
+        let request = MockRequest(
             method: .post,
             body: ["body": "value"]
         )

@@ -17,7 +17,9 @@ public struct NetworkManager: Sendable {
         self.responseHandler = responseHandler
     }
 
-    public func response<R: Request>(for request: R) async throws(NetworkError) -> R.Response {
+    public func response<Response: Decodable & Sendable>(
+        for request: any Request
+    ) async throws(NetworkError) -> Response {
         let urlRequest = try requestMapper(request)
         let data = try await getData(from: urlRequest)
         return try decode(data)

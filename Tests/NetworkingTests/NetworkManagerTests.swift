@@ -6,7 +6,7 @@ import Testing
 struct NetworkingTests {
     @Test
     func response() async throws {
-        let request = MockRequest<MockResponse>(
+        let request = MockRequest(
             parameters: ["query": "keyword"]
         )
         let expectedData = try JSONEncoder().encode(MockResponse(identifier: "123"))
@@ -25,7 +25,7 @@ struct NetworkingTests {
                 return (expectedData, expectedResponse)
             },
             requestMapper: { request throws(NetworkError) in
-                guard let request = request as? MockRequest<MockResponse>,
+                guard let request = request as? MockRequest,
                       let url = URL(string: "https://www.test.com.au")
                 else {
                     throw NetworkError.internalFailure
@@ -38,7 +38,7 @@ struct NetworkingTests {
                 #expect(data == expectedData)
             }
         )
-        let response = try await networkManager.response(for: request)
+        let response: MockResponse = try await networkManager.response(for: request)
         #expect(response.identifier == "123")
     }
 
@@ -55,7 +55,7 @@ struct NetworkingTests {
         await #expect(
             throws: NetworkError.invalidURL,
             performing: {
-                _ = try await networkManager.response(for: MockRequest<MockResponse>())
+                let _: MockResponse = try await networkManager.response(for: MockRequest())
             }
         )
     }
@@ -76,7 +76,7 @@ struct NetworkingTests {
         await #expect(
             throws: NetworkError.internalFailure,
             performing: {
-                _ = try await networkManager.response(for: MockRequest<MockResponse>())
+                let _: MockResponse = try await networkManager.response(for: MockRequest())
             }
         )
     }
@@ -98,7 +98,7 @@ struct NetworkingTests {
         await #expect(
             throws: NetworkError.internalFailure,
             performing: {
-                _ = try await networkManager.response(for: MockRequest<MockResponse>())
+                let _: MockResponse = try await networkManager.response(for: MockRequest())
             }
         )
     }
@@ -128,7 +128,7 @@ struct NetworkingTests {
         await #expect(
             throws: NetworkError.statusCode(500),
             performing: {
-                _ = try await networkManager.response(for: MockRequest<MockResponse>())
+                let _: MockResponse = try await networkManager.response(for: MockRequest())
             }
         )
     }
@@ -156,7 +156,7 @@ struct NetworkingTests {
         await #expect(
             throws: NetworkError.decoding,
             performing: {
-                _ = try await networkManager.response(for: MockRequest<MockResponse>())
+                let _: MockResponse = try await networkManager.response(for: MockRequest())
             }
         )
     }
