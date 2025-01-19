@@ -17,11 +17,17 @@ public struct NetworkManager: Sendable {
         self.responseHandler = responseHandler
     }
 
+    public func data(
+        for request: any Request
+    ) async throws(NetworkError) -> Data {
+        let urlRequest = try requestMapper(request)
+        return try await getData(from: urlRequest)
+    }
+
     public func response<Response: Decodable & Sendable>(
         for request: any Request
     ) async throws(NetworkError) -> Response {
-        let urlRequest = try requestMapper(request)
-        let data = try await getData(from: urlRequest)
+        let data = try await data(for: request)
         return try decode(data)
     }
 }
