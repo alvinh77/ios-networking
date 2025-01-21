@@ -20,7 +20,7 @@ struct RequestMapperTests {
     func postMethodRequest() throws {
         let request = MockRequest(
             method: .post,
-            body: ["body": "value"]
+            body: .json(["body": "value"])
         )
         let urlRequest = try RequestMapper().map(request)
         #expect(urlRequest.url?.absoluteString == "https://www.test.com/mock")

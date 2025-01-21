@@ -4,18 +4,18 @@ import NetworkingInterfaces
 public struct MockRequest: Request {
     public let baseURL: String
     public let path: String
-    public let method: Method
+    public let method: RequestMethod
     public let headers: [HeaderField]?
     public let parameters: [String: String]?
-    public let body: [String: Sendable]?
+    public let body: RequestBody?
 
     public init(
         baseURL: String = "https://www.test.com",
         path: String = "/mock",
-        method: Method = .get,
+        method: RequestMethod = .get,
         headers: [HeaderField]? = nil,
         parameters: [String: String]? = nil,
-        body: [String: Sendable]? = nil
+        body: RequestBody? = nil
     ) {
         self.baseURL = baseURL
         self.path = path

@@ -20,7 +20,7 @@ public struct RequestMapper: Sendable {
         }
         var urlRequest = URLRequest(url: url)
         if let body = request.body {
-            guard let bodyData = try? JSONSerialization.data(withJSONObject: body) else {
+            guard let bodyData = try? body.data else {
                 throw NetworkError.encoding
             }
             urlRequest.httpBody = bodyData
