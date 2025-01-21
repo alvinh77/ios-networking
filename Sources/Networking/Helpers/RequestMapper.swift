@@ -10,10 +10,8 @@ public struct RequestMapper: Sendable {
         ) else {
             throw NetworkError.invalidURL
         }
-        if request.method == .get {
-            urlComponents.queryItems = request.parameters?.map {
-                URLQueryItem(name: $0, value: $1)
-            }
+        urlComponents.queryItems = request.parameters?.map {
+            URLQueryItem(name: $0, value: $1)
         }
         guard let url = urlComponents.url else {
             throw NetworkError.invalidURL
