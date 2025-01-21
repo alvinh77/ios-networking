@@ -5,7 +5,7 @@ public struct MockRequest: Request {
     public let baseURL: String
     public let path: String
     public let method: Method
-    public let headers: [HeaderField: String]?
+    public let headers: [HeaderField]?
     public let parameters: [String: String]?
     public let body: [String: Sendable]?
 
@@ -13,7 +13,7 @@ public struct MockRequest: Request {
         baseURL: String = "https://www.test.com",
         path: String = "/mock",
         method: Method = .get,
-        headers: [HeaderField: String]? = nil,
+        headers: [HeaderField]? = nil,
         parameters: [String: String]? = nil,
         body: [String: Sendable]? = nil
     ) {

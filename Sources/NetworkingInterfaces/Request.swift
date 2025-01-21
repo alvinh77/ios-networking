@@ -3,7 +3,7 @@ public protocol Request: Sendable {
     var path: String { get }
     var parameters: [String: String]? { get }
     var method: Method { get }
-    var headers: [HeaderField: String]? { get }
+    var headers: [HeaderField]? { get }
     var body: [String: Sendable]? { get }
 }
 
@@ -12,8 +12,4 @@ public enum Method: String, Sendable {
     case get = "GET"
     case post = "POST"
     case put = "PUT"
-}
-
-public enum HeaderField: String, Sendable {
-    case contentType = "Content-Type"
 }

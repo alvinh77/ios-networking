@@ -1,12 +1,13 @@
 @testable import Networking
 import Foundation
+import NetworkingInterfaces
 import Testing
 
 struct RequestMapperTests {
     @Test
     func getMethodRequest() throws {
         let request = MockRequest(
-            headers: [.contentType: "abc"],
+            headers: [.contentType("abc")],
             parameters: ["query": "keyword"]
         )
         let urlRequest = try RequestMapper().map(request)

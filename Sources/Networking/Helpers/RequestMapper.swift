@@ -29,7 +29,7 @@ public struct RequestMapper: Sendable {
         if let headers = request.headers, headers.count > 0 {
             var allHTTPHeaderFields = urlRequest.allHTTPHeaderFields ?? [:]
             headers.forEach {
-                allHTTPHeaderFields[$0.key.rawValue] = $0.value
+                allHTTPHeaderFields[$0.key] = $0.value
             }
             urlRequest.allHTTPHeaderFields = allHTTPHeaderFields
         }
