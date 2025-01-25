@@ -19,23 +19,14 @@ public struct NetworkManager: Sendable {
 
     public func data(
         for request: any Request
-    ) async throws(NetworkError) -> Data {
+    ) async throws -> Data {
         let urlRequest = try requestMapper(request)
-        return try await getData(from: urlRequest)
+        return try await data(for: urlRequest)
     }
 
-    public func response<Response: Decodable & Sendable>(
-        for request: any Request
-    ) async throws(NetworkError) -> Response {
-        let data = try await data(for: request)
-        return try decode(data)
-    }
-}
-
-extension NetworkManager {
-    private func getData(
-        from request: URLRequest
-    ) async throws(NetworkError) -> Data {
+    public func data(
+        for request: URLRequest
+    ) async throws -> Data {
         do {
             let (data, response) = try await dataProvider(request)
             guard let response = response as? HTTPURLResponse else {
@@ -55,6 +46,15 @@ extension NetworkManager {
         }
     }
 
+    public func response<Response: Decodable & Sendable>(
+        for request: any Request
+    ) async throws -> Response {
+        let data = try await data(for: request)
+        return try decode(data)
+    }
+}
+
+extension NetworkManager {
     private func decode<Response: Decodable>(_ data: Data) throws(NetworkError) -> Response {
         do {
             return try JSONDecoder().decode(Response.self, from: data)
